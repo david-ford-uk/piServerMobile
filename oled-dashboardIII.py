@@ -87,15 +87,19 @@ def get_mysql_status():
                     else:
                         results.append(f"{name}:SLAVE {lag}s")
                 else:
-                    cur.execute("SHOW MASTER STATUS")
+                    cur.execute("SHOW REPLICA STATUS")
                     row = cur.fetchone()
                     if row:
-                        results.append(f"{name}:MASTER OK")
+                       lag = row[32]
+    
                     else:
-                        msg = f"{name}: UNKNOWN"
-                        results.append(msg)
-                        errors.append((name, "UNKNOWN ROLE"))
-                        has_error = True
+                       cur.execute("SHOW MASTER STATUS")
+                       row = cur.fetchone()
+                       if row:
+                          results.append(f"{name}:MASTER OK")
+                       else:
+                          results.append(f"{name}:UNKNOWN")
+
 
         except Exception as e:
             msg = f"{name}: ERR"
@@ -215,8 +219,8 @@ if __name__ == "__main__":
     flash_state = True
 
     while True:
-        # Refresh MySQL cluster every 30s
-        if time.time() - last_update > 30:
+        # Refresh MySQL cluster every 10s
+        if time.time() - last_update > 10:
             cluster_text, errors, has_error = get_mysql_status()
             last_update = time.time()
 
