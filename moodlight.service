@@ -1,0 +1,14 @@
+[Unit]
+Description=LED Moodlight Service
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/python3 /root/moodlight.py
+Restart=always
+User=root
+WorkingDirectory=/root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=OLED Display Service
+After=network-online.target
+
+[Service]
+ExecStart=/root/oledenv/bin/python /root/luma.examples/examples/oled-dashboardIII.py
+WorkingDirectory=/root/luma.examples/examples
+Restart=always
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
