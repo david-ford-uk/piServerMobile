@@ -1,0 +1,21 @@
+ ~/oledenv/bin/python /root/luma.examples/examples/oled-dashboardIII.py
+
+systemctl daemon-reload
+
+nano /etc/systemd/system/oled.service
+
+
+systemctl restart oled.service
+ nano /root/luma.examples/examples/oled-dashboardIII.py
+rm /root/luma.examples/examples/oled-dashboardIII.py
+
+
+ nano /root/moodlight.py
+ nano /etc/systemd/system/moodlight.service
+systemctl enable moodlight.service
+ /etc/systemd/system/moodlight.service
+
+
+
+
+mysql -h10.196.58.28 -u scftool -p
