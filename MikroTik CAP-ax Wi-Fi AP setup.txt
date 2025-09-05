@@ -1,0 +1,50 @@
+# --------------------------------------------------
+# MikroTik CAP-ax Wi-Fi AP setup
+# SSID 2.4GHz: devOpsRedTeam
+# SSID 5GHz : devOpsBlackTeam
+# Upstream DHCP: remote router
+# --------------------------------------------------
+
+/system reset-configuration no-defaults=yes skip-backup=yes
+
+# Give the AP a management identity
+/system identity set name="cap-ax-devOpsAP"
+
+# Bridge all LAN + Wi-Fi into one network (gets IP via DHCP from router)
+/interface bridge add name=bridge1 protocol-mode=none
+
+# Add all ports to bridge (Ethernet + Wi-Fi)
+/interface bridge port
+add bridge=bridge1 interface=ether1
+add bridge=bridge1 interface=wifi1
+add bridge=bridge1 interface=wifi2
+
+# Make bridge take IP via DHCP
+/ip dhcp-client add interface=bridge1 disabled=no use-peer-dns=yes use-peer-ntp=yes
+
+# Configure 2.4 GHz radio
+/interface wifi set wifi1 configuration.ssid="devOpsRedTeam" \
+    configuration.mode=ap \
+    configuration.country="united kingdom" \
+    channel.frequency=2412 \
+    channel.band=2ghz-g/n
+
+# Configure 5 GHz radio
+/interface wifi set wifi2 configuration.ssid="devOpsBlackTeam" \
+    configuration.mode=ap \
+    configuration.country="united kingdom" \
+    channel.frequency=5180 \
+    channel.band=5ghz-a/n/ac/ax
+
+# Enable WPA2/WPA3 security (change passphrase as needed)
+/interface wifi security add name=wifi-sec authentication-types=wpa2-psk,wpa3-psk \
+    passphrase="StrongPassHere123"
+/interface wifi set wifi1 security=wifi-sec
+/interface wifi set wifi2 security=wifi-sec
+
+# Optional: allow remote Winbox/Webfig via DHCP address
+/ip service enable winbox
+/ip service enable www-ssl
+
+# Save configuration
+/system script add name="initial-setup" source="# Initial setup completed"
